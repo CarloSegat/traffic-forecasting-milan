@@ -1,4 +1,4 @@
-from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+from statsmodels.graphics.tsaplots import plot_acf
 from statsmodels.tsa.arima_model import ARIMA
 
 from settings import TRAFFIC_TYPES

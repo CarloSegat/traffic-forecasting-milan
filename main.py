@@ -7,7 +7,6 @@ from src.abstract.stage import Stage
 from src.abstract.stage_output import StageOutput
 from src.stages.aggregate_cell import AggregateCell
 from src.stages.aggregate_timestamp import AggregateTimestamp
-from src.stages.arima import TestIntegratedARIMA
 from src.stages.augmented_lr import PerformAugmentedLinearRegression
 from src.stages.create_features import CreateFeatures
 from src.stages.full_aggregation_hour import FullHourAggregation
@@ -37,7 +36,6 @@ def ensure_aggregation_exists():
         pipeline = Pipeline("Aggregate raw data hourly")
         pipeline.add_stage(FullHourAggregation(DATADIR, 'sms-call-internet-mi-2013-*.txt'))
         pipeline.run()
-        pipeline.get().to_csv(RAW_HOUR_AGGREGATION_FILE, index=True)
 
 
 def ensure_znormalised_aggregated_exists():
@@ -176,10 +174,10 @@ def run_augmented_lr(cell_id, model):
 ### preprocessing & visualisation
 ensure_aggregation_exists()
 ensure_znormalised_aggregated_exists()
-# plot_daily_pattern(0)
-# plot_daily_pattern(58)
-# plot_weekday_vs_weekend()
-# plot_geo_heatmap()
+plot_daily_pattern(0)
+plot_daily_pattern(58)
+plot_weekday_vs_weekend()
+plot_geo_heatmap()
 ensure_square_mean_traffic_file()
 ensure_non_aggregated_normalised_file()
 ensure_lr_file()

@@ -1,6 +1,4 @@
-from sklearn.model_selection import train_test_split
-
-from settings import end_training, training_days
+from settings import training_days
 from src.abstract.stage import Stage
 from src.abstract.stage_output import StageOutput
 

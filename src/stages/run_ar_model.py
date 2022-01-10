@@ -1,12 +1,8 @@
-from datetime import timedelta, datetime
-
-from sklearn.metrics import mean_squared_error
 from statsmodels.tsa.arima_model import ARMA
 
 from settings import TRAFFIC_TYPES, end_training, end_timestamp
 from src.abstract.stage import Stage
 from src.abstract.stage_output import StageOutput
-import matplotlib.pyplot as plt
 import pandas as pd
 
 from src.stages.output.prediction_output import PredictionOutput

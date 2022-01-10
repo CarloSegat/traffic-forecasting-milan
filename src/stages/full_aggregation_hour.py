@@ -1,13 +1,11 @@
 import glob
 
-from settings import DATADIR
+from settings import RAW_HOUR_AGGREGATION_FILE
 from src.abstract.pipeline import Pipeline
 from src.abstract.stage import Stage
-import pandas as pd
 
 from src.abstract.stage_output import StageOutput
 from src.stages.single_aggregation_hour import AggregateHourly
-from src.stages.compute_stas import ComputeStats
 from src.stages.load_data import LoadData
 
 
@@ -28,18 +26,25 @@ class FullHourAggregation(Stage):
         self.pipelines: list[Pipeline] = []
         self.day = 0
         for filename in glob.iglob(self.folder + '/**/' + self.file_regex, recursive=True):
-            p = Pipeline("Process one day")
+            p = Pipeline(f"Processing: {filename}")
             p.add_stage(LoadData(filename, ['square_id', 'timestamp', 'country_code', 'sms_in', 'sms_out', 'call_in', 'call_out',
                         'internet'], offset_hour=True))
             p.add_stage(AggregateHourly())
             self.pipelines.append(p)
 
     def compute(self, previous: StageOutput):
-        result = pd.DataFrame()
+
+        with open(RAW_HOUR_AGGREGATION_FILE, 'a') as f:
+            f.write('square_id,timestamp,sms_in,sms_out,call_in,call_out,internet\n')
         for p in self.pipelines:
             self._print_progress()
             p.run()
-            result = result.append(p.get())
+            result = p.get()
+            # TODO write to file asap
+
+            with open(RAW_HOUR_AGGREGATION_FILE, 'a') as f:
+                f.write(result.to_csv(index=True, header=False))
+
         return FullAggregationHourOutput(result)
 
     def _print_progress(self):

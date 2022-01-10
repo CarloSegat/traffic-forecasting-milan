@@ -1,5 +1,4 @@
 import pandas as pd
-from sklearn.linear_model import LinearRegression, Lasso, Ridge
 
 from settings import TRAFFIC_TYPES
 from src.abstract.stage import Stage

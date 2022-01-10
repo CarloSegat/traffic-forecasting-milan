@@ -1,12 +1,8 @@
-from sklearn.metrics import mean_squared_error, median_absolute_error, r2_score
-
 from settings import TRAFFIC_TYPES
 from src.abstract.stage import Stage
 from src.abstract.stage_output import StageOutput
 from sklearn.linear_model import LinearRegression
 
-import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 
 from src.stages.output.prediction_output import PredictionOutput

@@ -1,6 +1,4 @@
-from sklearn.metrics import mean_squared_error
-
-from settings import TRAFFIC_TYPES, EPSILON
+from settings import TRAFFIC_TYPES
 from src.abstract.stage_output import StageOutput
 import numpy as np
 
@@ -13,8 +11,9 @@ class PredictionOutput(StageOutput):
         self.rmse = {}
 
         for f in TRAFFIC_TYPES:
-            squared = np.sqrt(np.sum(np.square((y_test[f] - predictions[f]))) / len(y_test[f]))
-            self.rmse[f] = squared
+            if f in y_test.columns and f in predictions.columns:
+                squared = np.sqrt(np.sum(np.square((y_test[f] - predictions[f]))) / len(y_test[f]))
+                self.rmse[f] = squared
 
     def get_data(self):
         return self

@@ -1,8 +1,6 @@
-from settings import DATADIR
 from src.abstract.stage import Stage
 from src.abstract.stage_output import StageOutput
-import pandas as pd
-import numpy as np
+
 
 class AggregateHourlyOutput(StageOutput):
 

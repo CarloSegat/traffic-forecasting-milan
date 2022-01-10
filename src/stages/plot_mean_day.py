@@ -1,9 +1,6 @@
-import numpy as np
-
-from settings import COMPUTEDDIR
 from src.abstract.stage import Stage
 from src.abstract.stage_output import StageOutput
-import matplotlib as plt
+
 
 class PlotMeanDayOutput(StageOutput):
 

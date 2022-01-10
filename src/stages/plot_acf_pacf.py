@@ -6,7 +6,7 @@ from settings import TRAFFIC_TYPES, COMPUTEDDIR
 from src.abstract.stage import Stage
 from src.abstract.stage_output import StageOutput
 from statsmodels.graphics.tsaplots import plot_pacf
-import matplotlib.pyplot as plt
+
 
 class PlotACF(Stage):
     def __init__(self, square_id):
