@@ -1,3 +1,4 @@
+from settings import TRAFFIC_TYPES
 from src.abstract.stage import Stage
 from src.abstract.stage_output import StageOutput
 
@@ -10,9 +11,7 @@ class ZNormaliseTraffics(Stage):
     def compute(self, previous: StageOutput) -> StageOutput:
         result = previous.get_data()
 
-        features = ['sms_in', 'sms_out', 'call_in', 'call_out', 'internet']
-
-        for f in features:
+        for f in TRAFFIC_TYPES:
             mean = previous.get_data()[f].mean()
             std = previous.get_data()[f].std()
             result[f] = (result[f] - mean) / std

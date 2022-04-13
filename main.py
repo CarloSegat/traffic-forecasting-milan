@@ -1,32 +1,30 @@
 import os
+
 import matplotlib.pyplot as plt
 
 from settings import DATADIR, COMPUTEDDIR, RAW_HOUR_AGGREGATION_FILE, Z_NORMALISED_HOUR_AGGREGATION_FILE, \
-    Z_NORMALISED_HOUR_FILE, ID_TRAFFIC_MAP_FILE, LINEAR_REGRESSION_FILE, TRAFFIC_TYPES, HIGH_CELL_ID
+    Z_NORMALISED_HOUR_FILE, ID_TRAFFIC_MAP_FILE, LINEAR_REGRESSION_FILE, TRAFFIC_TYPES, HIGH_CELL_ID, LOW_CELL_ID
+from src.abstract.pipeline import Pipeline
 from src.abstract.stage import Stage
 from src.abstract.stage_output import StageOutput
 from src.stages.aggregate_cell import AggregateCell
-from src.stages.aggregate_timestamp import AggregateTimestamp
-from src.stages.augmented_lr import PerformAugmentedLinearRegression
+from src.stages.aggregate_timestamp import CellAggregationByTimestamp
 from src.stages.create_features import CreateFeatures
 from src.stages.full_aggregation_hour import FullHourAggregation
 from src.stages.load_data import LoadData
-from src.abstract.pipeline import Pipeline
 from src.stages.merge_files import MergeFiles
 from src.stages.no_negative import NoNegative
 from src.stages.one_hot_encoder import OneHotEncode
 from src.stages.perform_dickey_fuller import PerformDickeyFuller
 from src.stages.perform_linear_regression import PerformLinearRegression
 from src.stages.plot_acf_pacf import PlotACF
-from src.stages.plot_global_cf import PlotGlobalCF
-from src.stages.run_ar_model import RunARModel
-from src.stages.tbats import RunTBATS
-from src.stages.train_data_augmented_lr import MakeTrainDataAugmentedLR
-from src.stages.train_test_split import TestTrainSplit
-from src.stages.z_normalise_traffic import ZNormaliseTraffics
 from src.stages.plot_geo import PlotGeo
+from src.stages.plot_global_cf import PlotGlobalCF
 from src.stages.plot_hourly_weekend import PlotHourlyWeekend
 from src.stages.plot_mean_day import PlotMeanDay
+from src.stages.run_ar_model import RunARModel
+from src.stages.train_test_split import TestTrainSplit
+from src.stages.z_normalise_traffic import ZNormaliseTraffics
 
 
 def ensure_aggregation_exists():
@@ -44,21 +42,18 @@ def ensure_znormalised_aggregated_exists():
     else:
         pipeline = Pipeline("Z normalisation-hour-aggregation")
         pipeline.add_stage(LoadData(RAW_HOUR_AGGREGATION_FILE))
-        pipeline.add_stage(AggregateTimestamp())
-        # pipeline.add_stage(ComputeStats())
+        pipeline.add_stage(CellAggregationByTimestamp())
         pipeline.add_stage(ZNormaliseTraffics())
         pipeline.run()
         pipeline.get().to_csv(Z_NORMALISED_HOUR_AGGREGATION_FILE, index=True)
 
 
-def plot_daily_pattern(begin):
+def plot_daily_pattern(start_day=0, how_many_days=3):
     pipeline = Pipeline("Compute mean plot")
     pipeline.add_stage(LoadData(Z_NORMALISED_HOUR_AGGREGATION_FILE))
-    pipeline.add_stage(PlotMeanDay(3, begin))
-    # pipeline.add_stage(LoadData(DATADIR, 'sms-call-internet-mi*.txt'))
-    # pipeline.add_stage(ComputeStats())
+    pipeline.add_stage(PlotMeanDay(how_many_days, start_day))
     pipeline.run()
-    pipeline.get().get_figure().savefig(COMPUTEDDIR + f'/3_days_hourly_from_{begin}.png')
+    pipeline.get().get_figure().savefig(COMPUTEDDIR + f'/{how_many_days}_days_hourly_from_{start_day}.png')
 
 
 def plot_weekday_vs_weekend():
@@ -161,20 +156,11 @@ def run_ar(order, cell_id):
     pipeline.add_stage(PlotPredicitonResults(f'ar/ar_{order}_{cell_id}'))
     pipeline.run()
 
-def run_augmented_lr(cell_id, model):
-    pipeline = Pipeline("Augmented Linear Regression")
-    pipeline.add_stage(LoadData(LINEAR_REGRESSION_FILE))
-    pipeline.add_stage(MakeTrainDataAugmentedLR(cell_id))
-    pipeline.add_stage(TestTrainSplit(TRAFFIC_TYPES, cell_id))
-    pipeline.add_stage(PerformAugmentedLinearRegression(model))
-    pipeline.add_stage(PlotPredicitonResults(f'lr_augmented/lr_{cell_id}'))
-    pipeline.run()
-
 
 ### preprocessing & visualisation
 ensure_aggregation_exists()
 ensure_znormalised_aggregated_exists()
-plot_daily_pattern(0)
+plot_daily_pattern()
 plot_daily_pattern(58)
 plot_weekday_vs_weekend()
 plot_geo_heatmap()
@@ -182,27 +168,22 @@ ensure_square_mean_traffic_file()
 ensure_non_aggregated_normalised_file()
 ensure_lr_file()
 
-# run_lr(LOW_CELL_ID, True)
-# run_lr(HIGH_CELL_ID, True)
+plot_acf_and_pacf(HIGH_CELL_ID)
+plot_acf_and_pacf(LOW_CELL_ID)
+plot_global_cf()
 
-# plot_acf_and_pacf(high_traffic_cell_id)
-# plot_acf_and_pacf(low_traffic_cell_id)
-# plot_global_cf()
+run_lr(LOW_CELL_ID, True)
+run_lr(HIGH_CELL_ID, True)
 
+run_ar(14, HIGH_CELL_ID)
+run_ar(14, LOW_CELL_ID)
 
-# run_ar(14, HIGH_CELL_ID)
-# run_ar(14, LOW_CELL_ID)
-# run_ar(28, HIGH_CELL_ID)
-# run_ar(28, LOW_CELL_ID)
+YOU_HAVE_A_LOT_OF_TIME=False
+if YOU_HAVE_A_LOT_OF_TIME:
+    run_ar(28, HIGH_CELL_ID)
+    run_ar(28, LOW_CELL_ID)
 
-# run_augmented_lr(LOW_CELL_ID, Ridge(alpha=0.1))
-# run_augmented_lr(HIGH_CELL_ID, Lasso(alpha=0.2))
-
-pipeline = Pipeline("Test Integerated")
-pipeline.add_stage(LoadData(LINEAR_REGRESSION_FILE))
-
-# pipeline.add_stage(TestIntegratedARIMA(LOW_CELL_ID))
-
-
-pipeline.add_stage(RunTBATS(HIGH_CELL_ID))
-pipeline.run()
+# pipeline = Pipeline("TBATS")
+# pipeline.add_stage(LoadData(LINEAR_REGRESSION_FILE))
+# pipeline.add_stage(RunTBATS(HIGH_CELL_ID))
+# pipeline.run()

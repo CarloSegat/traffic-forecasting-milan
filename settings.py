@@ -22,6 +22,8 @@ EPSILON =  1e-10
 HIGH_CELL_ID = 5161
 LOW_CELL_ID = 1207
 
+
+national_holidays = [(1, 11), (8, 12), (25, 12), (26,12), (31,12)]
 training_days = int(61 * 0.8)
 test_days = 61 - training_days
 start_timestamp = datetime(2013, 11, 1, 0, 0, 0)

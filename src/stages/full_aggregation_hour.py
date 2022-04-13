@@ -5,18 +5,9 @@ from src.abstract.pipeline import Pipeline
 from src.abstract.stage import Stage
 
 from src.abstract.stage_output import StageOutput
+from src.stages.output.df_output import DfOutput
 from src.stages.single_aggregation_hour import AggregateHourly
 from src.stages.load_data import LoadData
-
-
-class FullAggregationHourOutput(StageOutput):
-
-    def __init__(self, df):
-        self.df = df
-
-    def get_data(self):
-        return self.df
-
 
 class FullHourAggregation(Stage):
 
@@ -40,12 +31,10 @@ class FullHourAggregation(Stage):
             self._print_progress()
             p.run()
             result = p.get()
-            # TODO write to file asap
-
             with open(RAW_HOUR_AGGREGATION_FILE, 'a') as f:
                 f.write(result.to_csv(index=True, header=False))
 
-        return FullAggregationHourOutput(result)
+        return DfOutput(result)
 
     def _print_progress(self):
         m = f"{self.day + 1} / {len(self.pipelines)} completed"

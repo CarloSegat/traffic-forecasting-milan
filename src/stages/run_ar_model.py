@@ -32,13 +32,3 @@ class RunARModel(Stage):
             assert len(predictions) == len(test_hours[f])
             result[f] = predictions
         return PredictionOutput(test_hours[TRAFFIC_TYPES], result)
-            # residuals = test_hours[f] - predictions
-            # rmse = mean_squared_error(test_hours[f], predictions, squared=False)
-            # mean_abs_percent_error = round(np.mean(abs(residuals / test_hours[f])), 4)
-
-            # plt.figure(figsize=(10, 4))
-            # plt.plot(test_hours[f])
-            # plt.plot(predictions)
-            # plt.legend(("Data", "Predictions"))
-            # plt.show()
-            # print(mean_abs_percent_error)

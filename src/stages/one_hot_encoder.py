@@ -24,7 +24,6 @@ class OneHotEncode(Stage):
         one_hot_encoder = OneHotEncoder(handle_unknown='ignore')
 
         frame = pd.DataFrame(one_hot_encoder.fit_transform(df[self.categorical_features]).toarray())
-        print("frame.shape after 1hot ", frame.shape)
         result = df.join(frame)
         result = result.drop(columns=self.categorical_features)
         renamings = {}

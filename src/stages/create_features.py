@@ -1,16 +1,7 @@
+from settings import national_holidays
 from src.abstract.stage import Stage
 from src.abstract.stage_output import StageOutput
-
-
-class CreateFeaturesOutput(StageOutput):
-
-    national_holidays = [(1, 11), (8, 12), (25, 12), (26,12), (31,12)]
-
-    def __init__(self, df):
-        self.df = df
-
-    def get_data(self):
-        return self.df
+from src.stages.output.df_output import DfOutput
 
 
 class CreateFeatures(Stage):
@@ -31,12 +22,11 @@ class CreateFeatures(Stage):
 
         if 'weekend' in self.features:
             df['weekend'] = df['timestamp'].apply(
-                lambda t: t.weekday() >= 5)
+                lambda t: t.weekday() >= 5) # sat & sun are 5 & 6 resp.
         if 'national_holidays' in self.features:
             df['national_holiday'] = df['timestamp'].apply(
-                lambda t: any(map(lambda n_hol : n_hol[0] == t.day and n_hol[1] == t.month,
-                              CreateFeaturesOutput.national_holidays))
+                lambda t: any(map(lambda n_hol : n_hol[0] == t.day and n_hol[1] == t.month, national_holidays))
 
             )
 
-        return CreateFeaturesOutput(df)
+        return DfOutput(df)

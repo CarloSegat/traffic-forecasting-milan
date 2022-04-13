@@ -16,7 +16,7 @@ class PlotGlobalCF(Stage):
         df = previous.get_data()
         df = df.set_index('timestamp')
         for f in TRAFFIC_TYPES:
-            plot_acf(df[f].values, lags=48).savefig(
+            plot_acf(df[f].values, lags=48, title=f'acf_{f}_global').savefig(
                 os.path.join(COMPUTEDDIR, 'correlation_plots', 'global', f'{f}_acf.png'))
-            plot_pacf(df[f].values, lags=48).savefig(
+            plot_pacf(df[f].values, lags=48, title=f'pacf_{f}_global').savefig(
                 os.path.join(COMPUTEDDIR, 'correlation_plots', 'global', f'{f}_pacf.png'))

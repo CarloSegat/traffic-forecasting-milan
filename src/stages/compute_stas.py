@@ -3,6 +3,8 @@ from src.abstract.stage_output import StageOutput
 from src.stages.load_data import LoadDataOutput
 import pandas as pd
 
+from src.stages.output.df_output import DfOutput
+
 
 class ComputeStats(Stage):
 
@@ -12,18 +14,4 @@ class ComputeStats(Stage):
     def compute(self, previous: LoadDataOutput) -> StageOutput:
         raw = previous.get_data()
         describe = raw.describe()
-        return ComputeStatsOutput(describe, raw)
-
-
-class ComputeStatsOutput(StageOutput):
-
-    def __init__(self, stats, raw):
-        self.raw = raw
-        self.stats = stats
-
-
-    def get_data(self):
-        return self.stats
-
-    def get_raw_data(self):
-        return self.raw
+        return DfOutput(describe)

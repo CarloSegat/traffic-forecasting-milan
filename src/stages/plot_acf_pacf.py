@@ -19,9 +19,9 @@ class PlotACF(Stage):
         df = df.set_index('timestamp')
         for f in TRAFFIC_TYPES:
             # df['first_difference'] = df[f].values[1:] - df[f].values[:-1]
-            plot_acf(df[f].values, lags=48).savefig(
+            plot_acf(df[f].values, lags=48, title=f'acf_{f}_cell_{self.square_id}').savefig(
                 os.path.join(COMPUTEDDIR, 'correlation_plots', str(self.square_id), 'acf_' + f + '.png'))
-            plot_pacf(df[f].values, lags=48).savefig(
+            plot_pacf(df[f].values, lags=48, title=f'pacf_{f}_cell_{self.square_id}').savefig(
                 os.path.join(COMPUTEDDIR, 'correlation_plots', str(self.square_id), 'pacf_' + f + '.png'))
         print(4)
 

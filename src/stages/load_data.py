@@ -1,6 +1,5 @@
 import pandas as pd
 from src.abstract.stage import Stage
-import glob
 
 from src.abstract.stage_output import StageOutput
 

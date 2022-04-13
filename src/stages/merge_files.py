@@ -23,5 +23,4 @@ class MergeFiles(Stage):
         z_norm_df = self.z_norm_stage.compute(None).get_data()
         square_traffic_df = self.square_traffic.compute(None).get_data()
         result = z_norm_df.merge(square_traffic_df, on='square_id', how='left')
-        print("result.shape ", result.shape)
         return MergeFilesOutput(result)
