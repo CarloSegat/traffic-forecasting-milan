@@ -172,8 +172,8 @@ plot_acf_and_pacf(HIGH_CELL_ID)
 plot_acf_and_pacf(LOW_CELL_ID)
 plot_global_cf()
 
-run_lr(LOW_CELL_ID, True)
-run_lr(HIGH_CELL_ID, True)
+run_lr(LOW_CELL_ID)
+run_lr(HIGH_CELL_ID)
 
 run_ar(14, HIGH_CELL_ID)
 run_ar(14, LOW_CELL_ID)
